@@ -3,21 +3,27 @@ import TodoComputed from "./components/TodoComputed";
 import TodoCreate from "./components/TodoCreate";
 import TodoList from "./components/TodoList";
 import TodoFilter from "./components/TodoFilter";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import React from "react";
 
 
-const InitialStateTodos = [ 
+// const InitialStateTodos = [ 
   
-  {id:1 , title: "CooperativaPangea", completed: true},
-  {id:2 , title: "Go to the swim", completed: false},
-  {id:3 , title: "no beber alcohol", completed: false},
-  {id:4 , title: "estudiar figma", completed: true},  
-];
+//   {id:1 , title: "CooperativaPangea", completed: true},
+//   {id:2 , title: "Go to the swim", completed: false},
+//   {id:3 , title: "no beber alcohol", completed: false},
+//   {id:4 , title: "estudiar figma", completed: true},  
+// ];
+
+const InitialStateTodos = JSON.parse(localStorage.getItem("todos")) || [];
 
 const App = () => {
 
   const  [todos, setTodos] = useState(InitialStateTodos);
+
+  useEffect (() => {
+      localStorage.setItem("todos", JSON.stringify(todos))
+      }, [todos] );
 
   const createTodo = (title) => {
      const newTodo = {
@@ -63,11 +69,13 @@ const App = () => {
 
 
   return  (
-    <div className="min-h-screen bg-gray-300 bg-[url('./assets/images/bg-mobile-light.jpg')]  bg-contain bg-no-repeat dark:bg-gray-900 dark:bg-[url('./assets/images/bg-mobile-dark.jpg')] ">
+    <div className="min-h-screen bg-gray-300 bg-[url('./assets/images/bg-mobile-light.jpg')]  bg-contain bg-no-repeat
+    dark:bg-gray-900 dark:bg-[url('./assets/images/bg-mobile-dark.jpg')] md:bg-[url('./assets/images/bg-desktop-light.jpg')] 
+    md:dark:bg-[url('./assets/images/bg-desktop-dark.jpg')] transition-all duration-1000 ">
         
         <Header />
 
-        <main className="container mx-auto mt-8 px-4">
+        <main className="container mx-auto mt-8 px-4 md:max-w-xl transition-all duration-1000 ">
           {/*TodoCreate - Crea Todo's */}
           <TodoCreate createTodo={createTodo} />
           
