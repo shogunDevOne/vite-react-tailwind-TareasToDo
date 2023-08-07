@@ -1,3 +1,6 @@
+import { DragDropContext } from "@hello-pangea/dnd";
+
+
 import Header from "./components/Header";
 import TodoComputed from "./components/TodoComputed";
 import TodoCreate from "./components/TodoCreate";
@@ -16,6 +19,14 @@ import React from "react";
 // ];
 
 const InitialStateTodos = JSON.parse(localStorage.getItem("todos")) || [];
+
+const reorder = (list, startIndex, endIndex) => {
+  const result = [...list];
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result;
+};
 
 const App = () => {
 
@@ -67,6 +78,19 @@ const App = () => {
         } 
   }
 
+  const handleDragEnd = (result) => {
+    const { destination, source } = result;
+        if (!destination) return;
+        if (
+            source.index === destination.index &&
+            source.droppableId === destination.droppableId
+        )
+            return;
+
+        setTodos((prevTasks) =>
+            reorder(prevTasks, source.index, destination.index)
+        );
+};
 
   return  (
     <div className="min-h-screen bg-gray-300 bg-[url('./assets/images/bg-mobile-light.jpg')]  bg-contain bg-no-repeat
@@ -76,21 +100,26 @@ const App = () => {
         <Header />
 
         <main className="container mx-auto mt-8 px-4 md:max-w-xl transition-all duration-1000 ">
-          {/*TodoCreate - Crea Todo's */}
+          
           <TodoCreate createTodo={createTodo} />
           
-          {/* TodoList (TodoItem) TodoUpdate & TodoDelete */}
-          <TodoList  todos={filteredTodos()} removeTodo={removeTodo} updateTodo={updateTodo}  />
-      
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <TodoList  
+                todos={filteredTodos()} 
+                removeTodo={removeTodo} 
+                updateTodo={updateTodo}  
+            />
+          </DragDropContext>
+
           {/* TodoComputed operaciones computadas */}
           <TodoComputed  computedItemsLeft= {computedItemsLeft} clearCompleted={clearCompleted}  />
 
-          {/* TodoFilter */}
+          {/* TodoFilter filtra elementos */}
           <TodoFilter changeFilter={changeFilter} filter={filter} />   
 
         </main>
    
-        <footer className=" dark:text-gray-400 text-center mt-8">Drag and drop to reorder list</footer>
+        <footer className=" dark:text-gray-400 text-center mt-8">Arrastra y suelta , reordena tu lista</footer>
     </div>
   )
 };
